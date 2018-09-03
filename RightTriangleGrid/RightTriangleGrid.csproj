@@ -82,15 +82,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="index.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\TriangleController.cs" />
+    <Compile Include="Controllers\TrianglesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Label.cs" />
     <Compile Include="Models\Triangle.cs" />
     <Compile Include="Models\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

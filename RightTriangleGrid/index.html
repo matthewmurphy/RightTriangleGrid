@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Right Triangle Grid</title>
+</head>
+<body>
+
+    <div>
+        <h2>All Triangles</h2>
+        <ul id="triangles" />
+    </div>
+    <div>
+        <h2>Search by ID</h2>
+        <input type="text" id="id" size="2" />
+        <input type="button" value="Search" onclick="find();" />
+        <p id="triangle" />
+    </div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+        var uri = 'api/triangles';
+
+        $(document).ready(function () {
+            // Send an AJAX request
+            $.getJSON(uri)
+                .done(function (data) {
+                    // On success, 'data' contains a list of triangles.
+                    $.each(data, function (key, item) {
+                        // Add a list item for the triangle.
+                        $('<li>', { text: formatItem(item) }).appendTo($('#triangles'));
+                    });
+                });
+        });
+
+        function formatItem(item) {
+            return item.ID
+                + ': A(' + item.P1.X + ',' + item.P1.Y + '), '
+                + ': B(' + item.P2.X + ',' + item.P2.Y + '), '
+                + ': C(' + item.P3.X + ',' + item.P3.Y + ')';
+        }
+
+        function find() {
+            var id = $('#id').val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    $('#triangle').text(formatItem(data));
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#triangle').text('Error: ' + err);
+                });
+        }
+    </script>
+</body>
+</html>
