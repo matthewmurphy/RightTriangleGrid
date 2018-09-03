@@ -6,13 +6,37 @@
 <body>
 
     <div>
-        <h2>All Triangles</h2>
-        <ul id="triangles" />
-    </div>
-    <div>
-        <h2>Search by ID</h2>
-        <input type="text" id="id" size="2" />
-        <input type="button" value="Search" onclick="find();" />
+        <h1>Right Triangle Grid</h1>
+        <h2>Search by..</h2>
+        ID: <input type="text" id="id" size="2" />
+        <br />
+        <input type="button" value="Search" onclick="findByID();" />
+        <br />
+        <br />
+        <br />
+        or
+        <br />
+        <br />
+        <br />
+        Row: <input type="text" id="row" size="2" />
+        <br />
+        Column: <input type="text" id="col" size="2" />
+        <br />
+        <input type="button" value="Search" onclick="findByRowCol();" />
+        <br />
+        <br />
+        <br />
+        or
+        <br />
+        <br />
+        <br />
+        Vertex 1: X <input type="text" id="v1x" size="2" /> Y <input type="text" id="v1y" size="2" />
+        <br />
+        Vertex 2: X <input type="text" id="v2x" size="2" /> Y <input type="text" id="v2y" size="2" />
+        <br />
+        Vertex 3: X <input type="text" id="v3x" size="2" /> Y <input type="text" id="v3y" size="2" />
+        <br />
+        <input type="button" value="Search" onclick="findByVertices();" />
         <p id="triangle" />
     </div>
 
@@ -20,33 +44,49 @@
     <script>
         var uri = 'api/triangles';
 
-        $(document).ready(function () {
-            // Send an AJAX request
-            $.getJSON(uri)
-                .done(function (data) {
-                    // On success, 'data' contains a list of triangles.
-                    $.each(data, function (key, item) {
-                        // Add a list item for the triangle.
-                        $('<li>', { text: formatItem(item) }).appendTo($('#triangles'));
-                    });
-                });
-        });
-
         function formatItem(item) {
             return item.ID
-                + ': A(' + item.P1.X + ',' + item.P1.Y + '), '
-                + ': B(' + item.P2.X + ',' + item.P2.Y + '), '
-                + ': C(' + item.P3.X + ',' + item.P3.Y + ')';
+                + ':\n V1(' + item.V1.X + ',' + item.V1.Y + '), '
+                + ':\n V2(' + item.V2.X + ',' + item.V2.Y + '), '
+                + ':\n V3(' + item.V3.X + ',' + item.V3.Y + ')';
         }
 
-        function find() {
+        function findByID() {
             var id = $('#id').val();
             $.getJSON(uri + '/' + id)
                 .done(function (data) {
                     $('#triangle').text(formatItem(data));
                 })
                 .fail(function (jqXHR, textStatus, err) {
-                    $('#triangle').text('Error: ' + err);
+                    $('#triangle').text('Error: ' + err + ' - ' + jqXHR.responseText);
+                });
+        }
+
+        function findByRowCol() {
+            var row = $('#row').val();
+            var col = $('#col').val();
+            $.getJSON(uri + '/' + row + '/' + col)
+                .done(function (data) {
+                    $('#triangle').text(formatItem(data));
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#triangle').text('Error: ' + err + ' - ' + jqXHR.responseText);
+                });
+        }
+
+        function findByVertices() {
+            $.getJSON(uri
+                + '/' + $('#v1x').val()
+                + '/' + $('#v1y').val()
+                + '/' + $('#v2x').val()
+                + '/' + $('#v2y').val()
+                + '/' + $('#v3x').val()
+                + '/' + $('#v3y').val())
+                .done(function (data) {
+                    $('#triangle').text(data.ID);
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#triangle').text('Error: ' + err + ' - ' + jqXHR.responseText);
                 });
         }
     </script>

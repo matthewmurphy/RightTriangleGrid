@@ -9,29 +9,10 @@ namespace RightTriangleGrid.Controllers
 {
     public class TrianglesController : ApiController
     {
+        private const string invalidIdMessage = "Invalid ID. Must be a letter followed by a positive integer.";
+
         Triangle[] triangles = new Triangle[]
         {
-            new Triangle
-            {
-                ID = "A1",
-                P1 = new Point(0,0),
-                P2 = new Point(0,10),
-                P3 = new Point (10,10)
-            },
-            new Triangle
-            {
-                ID = "A2",
-                P1 = new Point(0,0),
-                P2 = new Point(10,0),
-                P3 = new Point (10,10)
-            },
-            new Triangle
-            {
-                ID = "B1",
-                P1 = new Point(0,10),
-                P2 = new Point(10,20),
-                P3 = new Point (0,20)
-            }
         };
 
         public IEnumerable<Triangle> GetAllTriangles()
@@ -43,7 +24,7 @@ namespace RightTriangleGrid.Controllers
         {
             if (id.Length != 2)
             {
-                return NotFound();
+                return BadRequest(invalidIdMessage);
             }
 
             char row = id[0];
@@ -51,14 +32,44 @@ namespace RightTriangleGrid.Controllers
             bool colParseSuccess = int.TryParse(id[1].ToString(), out col);
             if (!colParseSuccess)
             {
-                return NotFound();
+                return BadRequest(invalidIdMessage);
             }
 
-            var triangle = triangles.FirstOrDefault(t => t.ID.ToString().ToUpper() == id.ToUpper());
-            if (triangle == null)
+            return Get(row, col);
+        }
+
+        [Route("api/triangles/{row}/{column}")]
+        public IHttpActionResult Get(char row, int column)
+        {
+            // Verify the row is a letter
+            if (row < 65 || (row > 90 && row < 97) || row > 122)
+                return BadRequest(invalidIdMessage);
+
+            if (column <= 0)
+                return BadRequest(invalidIdMessage);
+
+            var triangle = new Triangle(row, column);
+            triangle.FindVerticesFromId();
+
+            return Ok(triangle);
+        }
+
+        [Route("api/triangles/{v1x}/{v1y}/{v2x}/{v2y}/{v3x}/{v3y}")]
+        public IHttpActionResult Get(int v1x, int v1y, int v2x, int v2y, int v3x, int v3y)
+        {
+            var triangle = new Triangle(
+                new Vertex(v1x, v1y),
+                new Vertex(v2x, v2y),
+                new Vertex(v3x, v3y));
+            try
             {
-                return NotFound();
+                triangle.FindIdFromVertices();
             }
+            catch (InvalidOperationException e)
+            {
+                return BadRequest(e.Message);
+            }
+
             return Ok(triangle);
         }
     }

@@ -1,11 +1,11 @@
 ﻿namespace RightTriangleGrid.Models
 {
-    public struct Point
+    public struct Vertex
     {
-        public float X { get; set; }
-        public float Y { get; set; }
+        public int X { get; }
+        public int Y { get; }
 
-        public Point(float x, float y)
+        public Vertex(int x, int y)
         {
             this.X = x;
             this.Y = y;
