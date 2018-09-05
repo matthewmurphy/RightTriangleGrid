@@ -7,6 +7,9 @@
 
     <div>
         <h1>Right Triangle Grid</h1>
+        <br />
+        Scale: <input type="number" id="scale" size="1" value="10" />
+        <br />
         <h2>Search by...</h2>
         ID: <input type="text" id="id" size="2" />
         <input type="button" value="Search" onclick="findByID();" />
@@ -40,7 +43,9 @@
 
         function findByID() {
             var id = $('#id').val();
-            $.getJSON(uri + '/' + id)
+            $.getJSON(uri
+                + '/' + id
+                + '?scale=' + $('#scale').val())
                 .done(function (data) {
                     $('#triangle').text(formatItem(data));
                 })
@@ -53,7 +58,8 @@
             $.getJSON(uri
                 + '/' + $('#v1').val()
                 + '/' + $('#v2').val()
-                + '/' + $('#v3').val())
+                + '/' + $('#v3').val()
+                + '?scale=' + $('#scale').val())
                 .done(function (data) {
                     $('#triangle').text(formatItem(data));
                 })

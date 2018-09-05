@@ -10,9 +10,9 @@ namespace RightTriangleGrid.Controllers
     public class TrianglesController : ApiController
     {
         private static string invalidIdMessage = "Invalid ID. Must be a letter followed by a positive integer.";
-
+        
         [Route("api/triangles/{id}")]
-        public IHttpActionResult Get(string id)
+        public IHttpActionResult Get(string id, int scale = 10)
         {
             if (id.Length < 2)
             {
@@ -27,14 +27,14 @@ namespace RightTriangleGrid.Controllers
                 return BadRequest(invalidIdMessage);
             }
 
-            return Get(row, col);
+            return Get(row, col, scale);
         }
 
         [Route("api/triangles/row/{row}/column/{column}")]
-        public IHttpActionResult Get(char row, int column)
+        public IHttpActionResult Get(char row, int column, int scale = 10)
         {
-            // Verify the row is a letter and the column is positive
-            if (row < 65 || (row > 90 && row < 97) || row > 122 || column <= 0)
+            // Verify the row is a letter, the column is positive, and the scale is positive
+            if (row < 65 || (row > 90 && row < 97) || row > 122 || column <= 0 || scale <= 0)
             {
                 return BadRequest(invalidIdMessage);
             }
@@ -42,7 +42,7 @@ namespace RightTriangleGrid.Controllers
             Triangle triangle;
             try
             {
-                triangle = new Triangle(row, column);
+                triangle = new Triangle(row, column, scale);
                 triangle.FindVerticesFromId();
             }
             catch (Exception e)
