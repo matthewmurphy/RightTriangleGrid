@@ -49,25 +49,13 @@
                 });
         }
 
-        function findByRowCol() {
-            var row = $('#row').val();
-            var col = $('#col').val();
-            $.getJSON(uri + '/' + row + '/' + col)
-                .done(function (data) {
-                    $('#triangle').text(formatItem(data));
-                })
-                .fail(function (jqXHR, textStatus, err) {
-                    $('#triangle').text('Error: ' + err + ' - ' + jqXHR.responseText);
-                });
-        }
-
         function findByVertices() {
             $.getJSON(uri
                 + '/' + $('#v1').val()
                 + '/' + $('#v2').val()
                 + '/' + $('#v3').val())
                 .done(function (data) {
-                    $('#triangle').text(data.ID);
+                    $('#triangle').text(formatItem(data));
                 })
                 .fail(function (jqXHR, textStatus, err) {
                     $('#triangle').text('Error: ' + err + ' - ' + jqXHR.responseText);
