@@ -22,14 +22,14 @@ namespace RightTriangleGrid.Controllers
 
         public IHttpActionResult GetTriangle(string id)
         {
-            if (id.Length != 2)
+            if (id.Length < 2)
             {
                 return BadRequest(invalidIdMessage);
             }
 
             char row = id[0];
             int col;
-            bool colParseSuccess = int.TryParse(id[1].ToString(), out col);
+            bool colParseSuccess = int.TryParse(id.Substring(1), out col);
             if (!colParseSuccess)
             {
                 return BadRequest(invalidIdMessage);
@@ -38,7 +38,7 @@ namespace RightTriangleGrid.Controllers
             return Get(row, col);
         }
 
-        [Route("api/triangles/{row}/{column}")]
+        [Route("api/triangles/row/{row}/column/{column}")]
         public IHttpActionResult Get(char row, int column)
         {
             // Verify the row is a letter
