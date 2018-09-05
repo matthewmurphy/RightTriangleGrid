@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RightTriangleGrid.Models
 {
@@ -13,8 +15,11 @@ namespace RightTriangleGrid.Models
         public Vertex V3 { get; private set; }
         public Vertex[] Vertices { get; private set; }
 
-        private const int defaultScale = 10;
+        private bool isOddColumn;
+
         private int Scale;
+
+        private const int defaultScale = 10;
 
         private const int asciiOffset = 64;
 
@@ -35,9 +40,9 @@ namespace RightTriangleGrid.Models
         /// <summary>
         /// Create a triangle from 3 vertices
         /// </summary>
-        /// <param name="v1">Top left</param>
-        /// <param name="v2">Bottom left (odd col), top right (even col)</param>
-        /// <param name="v3">Bottom right</param>
+        /// <param name="v1">Top-left</param>
+        /// <param name="v2">Bottom-left (odd col), top-right (even col)</param>
+        /// <param name="v3">Bottom-right</param>
         /// <param name="scale">Side length of non-hypotenus sides</param>
         public Triangle(Vertex v1, Vertex v2, Vertex v3, int scale = defaultScale)
         {
@@ -46,27 +51,6 @@ namespace RightTriangleGrid.Models
             this.V3 = v3;
             this.Vertices = new Vertex[] { V1, V2, V3 };
             this.Scale = scale;
-        }
-
-        /// <summary>
-        /// Validates that the vertices can make a valid triangle on the grid
-        /// </summary>
-        /// <returns>True if triangle is valid</returns>
-        public bool ValidateVertices()
-        {
-            foreach (Vertex v in Vertices)
-            {
-                if (v.X % Scale != 0 || v.Y % Scale != 0)
-                    return false;
-            }
-
-            if (V1.X + Scale != V3.X || V1.Y + Scale != V3.Y)
-                return false;
-
-            bool oddCol = ColumnIsEven();
-            bool evenCol = ColumnIsOdd();
-
-            return oddCol || evenCol;
         }
 
         /// <summary>
@@ -80,8 +64,8 @@ namespace RightTriangleGrid.Models
 
             Row = (char)(V1.Y / Scale + asciiOffset + 1);
 
-            Column = V1.X / Scale + 1;
-            if (ColumnIsEven())
+            Column = 2 * V1.X / Scale + 1;
+            if (!isOddColumn)
                 Column++;
 
             ID = Row.ToString() + Column;
@@ -123,14 +107,47 @@ namespace RightTriangleGrid.Models
             return Vertices;
         }
 
-        private bool ColumnIsOdd()
-        {
-            return V1.X == V2.X && V1.Y + Scale == V2.Y;
-        }
 
-        private bool ColumnIsEven()
+        /// <summary>
+        /// Validates that the vertices can make a valid triangle on the grid
+        /// </summary>
+        /// <returns>True if triangle is valid</returns>
+        public bool ValidateVertices()
         {
-            return V1.X + Scale == V2.X && V1.Y == V2.Y;
+            int minX = Vertices.Min(v => v.X);
+            int minY = Vertices.Min(v => v.Y);
+            int maxX = Vertices.Max(v => v.X);
+            int maxY = Vertices.Max(v => v.Y);
+
+            bool xScaleValid = (minX + Scale == maxX);
+            bool yScaleValid = (minY + Scale == maxY);
+            if (!(xScaleValid && yScaleValid))
+                return false;
+
+            // Two points must have the same X value, two other points must have the same Y value
+            var leftSide = Vertices.Where(v => v.X == minX);
+            if (leftSide.Count() == 2)
+            {
+                V1 = leftSide.SingleOrDefault(v => v.Y == minY);
+                V2 = leftSide.SingleOrDefault(v => v.Y == maxY);
+                V3 = Vertices.Except(new Vertex[] { V1, V2 }).SingleOrDefault();
+                isOddColumn = true;
+            }
+            else
+            {
+                var rightSide = Vertices.Where(v => v.X == maxX);
+                if (rightSide.Count() != 2)
+                    return false;
+
+                V2 = rightSide.SingleOrDefault(v => v.Y == minY);
+                V3 = rightSide.SingleOrDefault(v => v.Y == maxY);
+                V1 = Vertices.Except(new Vertex[] { V2, V3 }).SingleOrDefault();
+                isOddColumn = false;
+            }
+
+            this.Vertices = new Vertex[] { V1, V2, V3 };
+
+            return Vertices.All(v => v != null);
         }
 
         public override string ToString()

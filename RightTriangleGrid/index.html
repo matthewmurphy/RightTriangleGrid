@@ -15,11 +15,13 @@
         <h4>or</h4>
         <br />
         <br />
-        Vertex 1: X <input type="text" id="v1x" size="2" /> Y <input type="text" id="v1y" size="2" />
+        Enter coordinates as comma-separated numbers e.g. 10,20
         <br />
-        Vertex 2: X <input type="text" id="v2x" size="2" /> Y <input type="text" id="v2y" size="2" />
+        Vertex 1: <input type="text" id="v1" size="2" />
         <br />
-        Vertex 3: X <input type="text" id="v3x" size="2" /> Y <input type="text" id="v3y" size="2" />
+        Vertex 2: <input type="text" id="v2" size="2" />
+        <br />
+        Vertex 3: <input type="text" id="v3" size="2" />
         <br />
         <input type="button" value="Search" onclick="findByVertices();" />
         <p id="triangle" />
@@ -61,12 +63,9 @@
 
         function findByVertices() {
             $.getJSON(uri
-                + '/' + $('#v1x').val()
-                + '/' + $('#v1y').val()
-                + '/' + $('#v2x').val()
-                + '/' + $('#v2y').val()
-                + '/' + $('#v3x').val()
-                + '/' + $('#v3y').val())
+                + '/' + $('#v1').val()
+                + '/' + $('#v2').val()
+                + '/' + $('#v3').val())
                 .done(function (data) {
                     $('#triangle').text(data.ID);
                 })

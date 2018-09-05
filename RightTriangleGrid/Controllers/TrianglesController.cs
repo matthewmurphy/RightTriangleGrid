@@ -54,18 +54,18 @@ namespace RightTriangleGrid.Controllers
             return Ok(triangle);
         }
 
-        [Route("api/triangles/{v1x}/{v1y}/{v2x}/{v2y}/{v3x}/{v3y}")]
-        public IHttpActionResult Get(int v1x, int v1y, int v2x, int v2y, int v3x, int v3y)
+        [Route("api/triangles/{v1}/{v2}/{v3}")]
+        public IHttpActionResult Get(string v1, string v2, string v3)
         {
             var triangle = new Triangle(
-                new Vertex(v1x, v1y),
-                new Vertex(v2x, v2y),
-                new Vertex(v3x, v3y));
+                new Vertex(v1),
+                new Vertex(v2),
+                new Vertex(v3));
             try
             {
                 triangle.FindIdFromVertices();
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }

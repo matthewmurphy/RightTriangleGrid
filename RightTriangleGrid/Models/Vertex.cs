@@ -2,7 +2,7 @@
 
 namespace RightTriangleGrid.Models
 {
-    public struct Vertex
+    public class Vertex
     {
         public int X { get; }
         public int Y { get; }
