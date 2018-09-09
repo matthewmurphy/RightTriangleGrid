@@ -114,6 +114,11 @@ namespace RightTriangleGrid.Models
         /// <returns>True if triangle is valid</returns>
         public bool ValidateVertices()
         {
+            if (Vertices.Any(v =>
+                    v.X % Scale != 0
+                    || v.Y % Scale != 0))
+                return false;
+
             int minX = Vertices.Min(v => v.X);
             int minY = Vertices.Min(v => v.Y);
             int maxX = Vertices.Max(v => v.X);
