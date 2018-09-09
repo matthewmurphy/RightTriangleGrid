@@ -114,8 +114,8 @@ namespace RightTriangleGrid.Models
         /// <returns>True if triangle is valid</returns>
         public bool ValidateVertices()
         {
-            if (Vertices.Any(v =>
-                    v.X % Scale != 0
+            if (Vertices.Any(
+                v =>   v.X % Scale != 0
                     || v.Y % Scale != 0))
                 return false;
 
@@ -149,6 +149,10 @@ namespace RightTriangleGrid.Models
                 V1 = Vertices.Except(new Vertex[] { V2, V3 }).SingleOrDefault();
                 isOddColumn = false;
             }
+
+            // V3's X and Y coordinates each must be Scale greater than V1's
+            if ((V1.X + Scale != V3.X) || (V1.Y + Scale != V3.Y))
+                return false;
 
             this.Vertices = new Vertex[] { V1, V2, V3 };
 
